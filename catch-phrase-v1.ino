@@ -246,6 +246,7 @@ void do_tic_toc()
   long now = millis();
   // update frequency and end game if needed
   if (now - last_beep_speed_change_millis > beep_frequency_change_interval_millis) {
+    last_beep_speed_change_millis = now;
     // Handle the time up case
     if (++cur_beep_interval >= NUM_BEEP_INTERVALS) {
       end_current_round();
@@ -261,6 +262,7 @@ void do_tic_toc()
       play_beep(BEEP_TOC);
     }
     next_is_tic = !(next_is_tic);
+    last_tictoc_millis = now;
   }
 }
 
