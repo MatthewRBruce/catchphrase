@@ -1,9 +1,13 @@
+#define MAX_LONG 4294967295
+
 byte TEAM1_PIN = 2;
 byte TEAM2_PIN = 3;
 byte START_STOP_PIN = 18;
 byte NEXT_PIN = 19;
 byte CATEGORY_PIN = 20;
+byte SPEAKER_PIN = 7;
 
+unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
 class Button {
 
@@ -38,7 +42,7 @@ void Button::update_advertised_state() {
       last_change_millis = now;        
     }
 
-    if(now - last_change_millis > 50) {
+    if(subtract_times(now,last_change_millis) > 50) {
       last_advertised_state = cur_advertised_state;
       cur_advertised_state = cur_state;
     }  
@@ -92,10 +96,10 @@ int cur_clue = 0;
 // Tic-toc related constants and state variables
 
 // How long does each beep frequency last?
-short beep_frequency_change_interval_millis = 15000;
+unsigned long beep_frequency_change_interval_millis = 15000;
 
 // What are the waits between each beep?
-short beep_interval_millis[] = {1000, 500, 333, 250};
+unsigned long beep_interval_millis[] = {500, 500, 300, 200};
 
 // The number of beep speeds 
 int NUM_BEEP_INTERVALS = 4;
@@ -107,10 +111,10 @@ int cur_beep_interval = 0;
 bool next_is_tic = true;
 
 // Last time we did a tic or toc
-bool last_tictoc_millis = 0;
+unsigned long last_tictoc_millis = 0;
 
 // Last time we sped up the tic/toc
-bool last_beep_speed_change_millis = 0;
+unsigned long last_beep_speed_change_millis = 0;
 
 
 // BEEP!
@@ -127,14 +131,23 @@ enum BEEP_TYPE {
   BEEP_EXIT_GAME_DONE_STATE,
 };
 
+
+//440 -> 490 -> 440 for score reset?
+
 // Just output for now
 void play_beep(BEEP_TYPE beep) {
   Serial.print("BEEP - ");  
   switch (beep) {
     case BEEP_TIC:
+      analogWrite(SPEAKER_PIN,2);
+      delay(100);
+      analogWrite(SPEAKER_PIN,0);
       Serial.println("TIC");
       break;
     case BEEP_TOC:
+      analogWrite(SPEAKER_PIN,2);
+      delay(100);
+      analogWrite(SPEAKER_PIN,0);           
       Serial.println("TOC");
       break;
     case BEEP_TIMES_UP:
@@ -164,6 +177,20 @@ void play_beep(BEEP_TYPE beep) {
   }
 }
 
+unsigned long subtract_times(unsigned long t1, unsigned long t2) {
+  //If t1 is less than t2 then we assume t1 has overflowed
+  if (t1 < t2) {
+    return (MAX_LONG - t2) + t1;
+  }
+  return t1 - t2;
+}
+
+
+void updateDisplay(String displayString) {
+  Serial.print(score_team1);
+  Serial.print(displayString);
+  Serial.println(score_team2);  
+}
 
 
 void setup() {
@@ -186,13 +213,10 @@ void setup() {
   digitalWrite(START_STOP_PIN,HIGH);
   digitalWrite(NEXT_PIN,HIGH);
   digitalWrite(CATEGORY_PIN,HIGH);
-  
-}
 
-void updateDisplay(String displayString) {
-  Serial.print(score_team1);
-  Serial.print(displayString);
-  Serial.println(score_team2);  
+  
+  
+  updateDisplay(categories[cur_category]);
 }
 
 void rotate_category() {
@@ -241,11 +265,14 @@ void end_game() {
   game_state = GAME_DONE;
 }
 
+
 void do_tic_toc()
 {
-  long now = millis();
+  unsigned long now = millis();
   // update frequency and end game if needed
-  if (now - last_beep_speed_change_millis > beep_frequency_change_interval_millis) {
+  
+  
+  if (subtract_times(now, last_beep_speed_change_millis) > beep_frequency_change_interval_millis) {
     last_beep_speed_change_millis = now;
     // Handle the time up case
     if (++cur_beep_interval >= NUM_BEEP_INTERVALS) {
@@ -255,7 +282,7 @@ void do_tic_toc()
   }
 
   // Beep if needed
-  if (now - last_tictoc_millis > beep_interval_millis[cur_beep_interval]) {
+  if (subtract_times(now,last_tictoc_millis) > beep_interval_millis[cur_beep_interval]) {
     if (next_is_tic) {
       play_beep(BEEP_TIC);
     } else {
@@ -297,6 +324,7 @@ void loop() {
         if (button_category.just_pressed()) {
           play_beep(BEEP_CATEGORY_CHANGE);
           rotate_category();
+          updateDisplay(categories[cur_category]);
         }
 
         // If we get new team1/2 button push, and the other one is pressed
@@ -312,10 +340,12 @@ void loop() {
         else if (button_team1.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team1;
+          updateDisplay(categories[cur_category]);
         }
         else if (button_team2.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team2;
+          updateDisplay(categories[cur_category]);
         }
         if (score_team1 == 7 || score_team2 == 7) \
         {
@@ -327,7 +357,7 @@ void loop() {
         // have been pushed will update the display.  Note the the start/stop
         // button push won't end up here since we break in that case.  Same with the
         // game over case.
-        updateDisplay(categories[cur_category]);
+        
         break;
       case IN_ROUND:
         if (button_start_stop.just_pressed()) {
@@ -350,18 +380,14 @@ void loop() {
         // The actions are similar whether we get a category button, start/stop button
         // or simultaneous team1/team2 press (sounds differ).
         if (button_start_stop.just_pressed() ||
-            button_category.just_pressed() ||
-            is_score_reset_needed()) {
+            button_category.just_pressed()) {
           game_state = CATEGORY_SELECTION;
-          int score_team1 = 0;
-          int score_team2 = 0;
+          score_team1 = 0;
+          score_team2 = 0;
 
-          if (is_score_reset_needed()) {
-            play_beep(BEEP_SCORE_RESET);
-          } else {
-            play_beep(BEEP_EXIT_GAME_DONE_STATE);
-          }
-
+          play_beep(BEEP_EXIT_GAME_DONE_STATE);
+          updateDisplay(categories[cur_category]);
+          
           // Let the next loop() handle the display update
         }
         break;
