@@ -6,7 +6,7 @@
 String pad_display_line(String text) {
   // If uneven padding is needed on left and right, pad less on the left
   // (arbitrarily).
-  byte leftPad = MAX_DISPLAY_LINE_LENGTH - text.length()/2;
+  byte leftPad = (MAX_DISPLAY_LINE_LENGTH - text.length())/2;
   byte rightPad = MAX_DISPLAY_LINE_LENGTH - text.length() - leftPad;
   String paddedText = "";
   for (int i = 0; i < leftPad; ++i) {
@@ -19,9 +19,8 @@ String pad_display_line(String text) {
   return paddedText;
 }
 
-// Return an array of 2 bytes; which is the number of characters on
-// the first row and second row of the display respectively
-String[] get_display_lines(String text)
+// See display.h for documentation
+String get_display_text(String text)
 {
   // Algorithm:
   // - Put as many words as possible in the first line without overflow
@@ -39,16 +38,19 @@ String[] get_display_lines(String text)
   //   actually building the strings yet, then do the string building
 
   // Start with removing extra spaces just in case.
-  text = text.trim();
+  text.trim();
 
   // Assume we won't have to split (-1).
-  byte splitPosition = -1;
-  while (true) {
+  short splitPosition = -1;
+
+  // We're going to break the loop when we find no more spaces; use the condition
+  // to skip the search if the text length will fit on the first line.
+  while (text.length() > MAX_DISPLAY_LINE_LENGTH) {
     // Greedily jam in as many words as possible on the top line
     // Subtle point: splitPosition+1 is always guaranteed to be a valid
     // index because of the text.trim() call above which guaranteeds we
     // don't end in a space.
-    nextSpacePosition = text.indexOf(" ", splitPosition + 1);
+    short nextSpacePosition = text.indexOf(" ", splitPosition + 1);
     if (nextSpacePosition == -1 || nextSpacePosition > MAX_DISPLAY_LINE_LENGTH)
     {
         // There are no more spaces, or the next space is too far away.
@@ -59,6 +61,7 @@ String[] get_display_lines(String text)
     }
     splitPosition = nextSpacePosition;
   }
+
   // We're now in a position where we have the optimal split position, if possible
   // but we don't know whether a split is possible that fits everything.  So build
   // up the strings needed, and check their lengths.
@@ -71,15 +74,20 @@ String[] get_display_lines(String text)
   } else {
     // Arduino String::substring() is inclusive on start index, exclusive on end index.
     topText = text.substring(0, splitPosition);
-    bottomText = text.substring(splitPosition);
+
+    // Start the bottom text at splitPosition + 1 since we don't need to print the space.
+    bottomText = text.substring(splitPosition + 1);
   }
 
   if (topText.length() > MAX_DISPLAY_LINE_LENGTH ||
       bottomText.length() > MAX_DISPLAY_LINE_LENGTH) {
-    // Use empty strings to denote can't do it
-    return {"", ""};
+    // Use empty string to denote can't do it
+    return "";
   }
 
-  return {pad_display_line(topText), pad_display_line(bottomText)};
+  String returnText = pad_display_line(topText);
+  returnText += pad_display_line(bottomText);
+
+  return returnText;
 }
 

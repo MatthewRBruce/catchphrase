@@ -1,3 +1,7 @@
+
+#include <LiquidCrystal.h>
+#include "display.h"
+
 #define MAX_LONG 4294967295
 
 byte TEAM1_PIN = 2;
@@ -6,6 +10,14 @@ byte START_STOP_PIN = 18;
 byte NEXT_PIN = 19;
 byte CATEGORY_PIN = 20;
 byte SPEAKER_PIN = 7;
+
+// Picked these randomly - Scott
+byte LCD_PIN_RS = 10;
+byte LCD_PIN_E  = 11;
+byte LCD_PIN_D4 = 12
+byte LCD_PIN_D5 = 13;
+byte LCD_PIN_D6 = 14;
+byte LCD_PIN_D7 = 15;
 
 unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
@@ -76,6 +88,15 @@ Button button_team2(TEAM2_PIN);
 Button button_start_stop(START_STOP_PIN);
 Button button_next(NEXT_PIN);
 Button button_category(CATEGORY_PIN);
+
+// Pins: RS,E,D4,D5,D6,D7
+LiquidCrystal lcd(
+  LCD_PIN_RS,
+  LCD_PIN_E,
+  LCD_PIN_D4,
+  LCD_PIN_D5,
+  LCD_PIN_D6,
+  LCD_PIN_D7);
 
 int score_team1 = 0;
 int score_team2 = 0;
@@ -187,9 +208,36 @@ unsigned long subtract_times(unsigned long t1, unsigned long t2) {
 
 
 void updateDisplay(String displayString) {
+
+  String formattedText = get_display_text(displayString);
+
+  // TODO: when integrated with SD, check this earlier.  At this point
+  // we can't handle it by picking the next clue
+  if (formattedText.length() == 0) {
+    Serial.print("OOPS! CAN'T DISPLAY: ");
+    Serial.println(displayString);
+    Serial.print("formatted: ");
+    Serial.println(formattedText);
+    return;
+  }
+
+  lcd.setCursor(0, 0);
+  lcd.print(score_team1);
+  lcd.print(" ");
+  lcd.print(formattedText.substring(0,12));
+  lcd.print(" ");
+  lcd.print(score_team2); 
+  lcd.setCursor(0, 1);
+  lcd.print("  ");
+  lcd.print(formattedText.substring(12));
+
   Serial.print(score_team1);
-  Serial.print(displayString);
-  Serial.println(score_team2);  
+  Serial.print(" ");
+  Serial.print(formattedText.substring(0,12));
+  Serial.print(" ");
+  Serial.println(score_team2); 
+  Serial.print("  ");
+  Serial.print(formattedText.substring(12));
 }
 
 
@@ -214,8 +262,8 @@ void setup() {
   digitalWrite(NEXT_PIN,HIGH);
   digitalWrite(CATEGORY_PIN,HIGH);
 
-  
-  
+  // Initialize the LCD (16 columns, 2 rows)
+  lcd.begin(16, 2);
   updateDisplay(categories[cur_category]);
 }
 
@@ -243,8 +291,8 @@ void start_new_round() {
   last_tictoc_millis = 0; // want it to tic immediately
   last_beep_speed_change_millis = millis(); // since we just changed the frequency
 
-  // Leave the tic/toc timer and display update to loop() which will do this
-  // based on the new game_state.
+  // Update the display
+  updateDisplay(clues[cur_clue]);
 }
 
 void end_current_round() {
@@ -303,6 +351,7 @@ bool is_score_reset_needed() {
 
 
 void loop() {
+  
     // Update all the buttons state
     button_team1.update_advertised_state();
     button_team2.update_advertised_state();
