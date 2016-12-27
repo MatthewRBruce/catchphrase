@@ -14,7 +14,7 @@ byte SPEAKER_PIN = 7;
 // Picked these randomly - Scott
 byte LCD_PIN_RS = 10;
 byte LCD_PIN_E  = 11;
-byte LCD_PIN_D4 = 12
+byte LCD_PIN_D4 = 12;
 byte LCD_PIN_D5 = 13;
 byte LCD_PIN_D6 = 14;
 byte LCD_PIN_D7 = 15;
