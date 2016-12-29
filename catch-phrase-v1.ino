@@ -1,7 +1,9 @@
-
 #include <LiquidCrystal.h>
 #include "display.h"
+#include "button.h"
+#include "cat_clues.h"
 
+#define byte uint8_t
 #define MAX_LONG 4294967295
 
 byte TEAM1_PIN = 2;
@@ -19,69 +21,7 @@ byte LCD_PIN_D5 = 13;
 byte LCD_PIN_D6 = 14;
 byte LCD_PIN_D7 = 15;
 
-unsigned long subtract_times(unsigned long t1, unsigned long t2);
-
-class Button {
-
-  public:
-    Button(byte PIN);
-    byte PIN;
-    byte last_advertised_state;
-    byte cur_advertised_state;
-    long last_change_millis;
-    void update_advertised_state();
-    bool just_pressed();
-    bool just_released();
-    bool is_pressed();
-    bool is_released();
-
-  private:
-    byte last_read_state;
-};  
-
-Button::Button (byte PIN) {
-    this->PIN = PIN;
-    this->last_advertised_state = 1;
-    this->last_read_state = 1;
-    this->last_change_millis = 0;
-}
-
-
-void Button::update_advertised_state() {
-    byte cur_state = digitalRead(this->PIN);
-    long now = millis();
-    if (cur_state != last_read_state) {
-      last_change_millis = now;        
-    }
-
-    if(subtract_times(now,last_change_millis) > 50) {
-      last_advertised_state = cur_advertised_state;
-      cur_advertised_state = cur_state;
-    }  
-    last_read_state = cur_state;
-  }
-
-//is the calcuated stated different from the last advertised state
-bool Button::just_pressed() {
-    if(cur_advertised_state != last_advertised_state && is_pressed()) {
-      return true;
-    }
-    return false;
-  }
-
-bool Button::just_released() {
-    if(cur_advertised_state != last_advertised_state && is_released()) {
-      return true;
-    }
-    return false;
-}
-
-bool Button::is_pressed() {
-    return cur_advertised_state == 0;
-}
-bool Button::is_released() {
-    return cur_advertised_state == 1;
-}
+extern unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
 Button button_team1(TEAM1_PIN);
 Button button_team2(TEAM2_PIN);
@@ -103,16 +43,9 @@ int score_team2 = 0;
 
 enum GAME_STATES {CATEGORY_SELECTION,IN_ROUND,GAME_DONE};
 
-GAME_STATES game_state = NULL;
+GAME_STATES game_state = CATEGORY_SELECTION;
 
-String categories[] = {"Everything", "People", "World"};
-int NUM_CATEGORIES = 3;
 int cur_category = 0;
-
-// For now, just have some clues
-String clues[] = {"Big Sur", "Chocolate cake", "Butterfly bandage"};
-int NUM_CLUES = 3;
-int cur_clue = 0;
 
 // Tic-toc related constants and state variables
 
@@ -137,6 +70,8 @@ unsigned long last_tictoc_millis = 0;
 // Last time we sped up the tic/toc
 unsigned long last_beep_speed_change_millis = 0;
 
+// File Descriptor for clue file on the SD card
+File cluefile;
 
 // BEEP!
 enum BEEP_TYPE {
@@ -264,6 +199,7 @@ void setup() {
 
   // Initialize the LCD (16 columns, 2 rows)
   lcd.begin(16, 2);
+  cluefile = readFile("catchphrase.txt");
   updateDisplay(categories[cur_category]);
 }
 
@@ -273,16 +209,7 @@ void rotate_category() {
   }
 }
 
-// TODO: this has to read from micro SD
-void rotate_clue () {
-  if(++cur_clue>= NUM_CLUES) {
-    cur_clue = 0;
-  }
-}
-
-
 void start_new_round() {
-  rotate_clue();
   game_state = IN_ROUND;
 
   // Set up the timer-related stuff
@@ -292,7 +219,7 @@ void start_new_round() {
   last_beep_speed_change_millis = millis(); // since we just changed the frequency
 
   // Update the display
-  updateDisplay(clues[cur_clue]);
+  updateDisplay(get_clue_as_string(cur_category,cluefile));
 }
 
 void end_current_round() {
@@ -420,8 +347,7 @@ void loop() {
         }
         if (button_next.just_pressed()) {
           // No sound on this event
-          rotate_clue();
-          updateDisplay(clues[cur_clue]);
+          updateDisplay(get_clue_as_string(cur_category,cluefile));
         }
         do_tic_toc();
         break;
