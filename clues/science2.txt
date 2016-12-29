@@ -1,0 +1,569 @@
+
+Aberration
+Absolute
+Absorptive Power
+Acceleration
+Accelerator
+Accelerometer
+Accessory
+Accommodation
+Action
+Adhesion
+Adiabatic
+Advantage
+Aerial
+Aeroplane
+Aileron
+Air Brake
+Air Pump
+Alternating Current
+Alternation
+Alternator
+Altimeter
+Amplifier
+Amplitude
+Analogy
+Analysis (Of Light)
+Angle of Contact
+Angle of Deviation
+Angle of Emergence
+Angle of Incidence
+Angle of Projection
+Angle of Reflection
+Angular Moment
+Angular Velocity
+Anode
+Anticlockwise
+Apparatus
+Apparent
+Apparent Expansion
+Arrestment
+Astigmatism
+Astronomical
+Astronomy
+Atmosphere
+Atom
+Atomic Number
+Automatic
+Auxiliary
+Axis of Mirror
+Balance Wheel
+Balancing Point
+Bar Magnet
+Barograph
+Baroscope
+Baroscopic
+Base
+Battery
+Beaker
+Beam of Balance
+Beam of Light
+Beats
+Bell Jar
+Belt (For Driving)
+Biconvex Lens
+Binding Energy
+Biding Screw
+Bioscope
+Black Body
+Block (Pulling)
+Bob
+Boiler
+Boiling Point
+Brake
+Brush
+Bulb
+Buoy
+Buoyancy
+Calibration
+Calliper
+Cam
+Capacitance
+Capillarity
+Carrier Waves
+Cathode
+Centre of Buoyancy
+Centre of Curvature
+Centre of Gravity
+Centre of Oscillation
+Centre of Pressure
+Centre of Suspension
+Centrifugal
+Centripetal
+Chromatic Aberration
+Chromo Sphere
+Chronometer
+Circulation
+Clamp
+Clip
+Clockwise
+Code
+Coefficient
+Cohesion
+Collination
+Collinator
+Collision
+Colour Blindness
+Commutator
+Compass
+Compass Needle
+Compass Points
+Compensated
+Components (Of Forces)
+Composition of Forces
+Compressibility
+Computer
+Concave
+Concave Lens
+Concave Mirror
+Concavo-Convex Lens
+Concurrent
+Condenser
+Conductance
+Conduction
+Conductor
+Conjugated Foci
+Connection in Parallel
+Constant
+Continuous Current
+Convection
+Convergent (Pencil)
+Convex Lens
+Convex Mirror
+Core
+Counter Clockwise
+Couple
+Couple Forces
+Coupling
+Crank
+Crests and Troughs
+Critical Angle
+Cross Section
+Cross Wire
+Cubical Expansion
+Declination
+Definition
+Deflection
+Demagnetization
+Density
+Depolarisation
+Depolariser
+Depression
+Detector
+Developer
+Deviation
+Dew-point
+Diagram
+Diaphragm
+Diatomic scale
+Dielectric
+Diffraction
+Direct current
+Directive property
+Disc
+Discord
+Displacement
+Divergent
+Divisibility
+Down stroke
+Ductility
+Ebullition
+Eccentric
+Efficiency
+Effort
+Elastic Fatigue
+Elasticity
+Electric Circuit
+Electric Charge
+Electric Current
+Electric Discharge
+Electric Field
+Electric Induction
+Electric Resistance
+Electric Shock
+Electrification
+Electrode
+Electro Motive Force
+Electrolysis
+Electrolyte
+Electron
+Electronics
+Electroplating
+Electroscope
+Elevator
+Elongation
+Emergent Ray
+Energy
+Equilibrant
+Equilibrium
+Exhaustion
+Expansion
+Eye Lens
+Eye Piece
+Fathometer
+Fatigue
+Film
+Fixed Point
+Fixing
+Flask
+Flexibility
+Flotation
+Flow
+Fluid
+Focal Length
+Focus
+Fog
+Force Pump
+Formula
+Freezing Mixture
+Freezing Point
+Frequency
+Friction
+Frictional Resistance
+Frost
+Fulcrum
+Fundamental
+Fuse
+Gaseous State
+Gauge
+Generator
+Graduation
+Grating
+Gravitation
+Gravity
+Grid
+Ground Glass
+Hail
+Hardness
+Harmony
+Heating effect
+Hinge
+Horse power
+Humidity
+Hydraulic brake
+Hydraulic press
+Hydro meter
+Hygrometer
+Hygrometric state
+Ignition
+Illuminative Power
+Impact
+Impulse
+Incandescence
+Incident Ray
+Inclination
+Inclined Plane
+Incompressibility
+Indestructibility
+Index
+Indigo
+Indivisibility
+Induced Magnetization
+Induction
+Induction Coil
+Inertia
+Inference
+Inflator
+Insulation
+Intensity
+Interaction
+Interference
+Interval
+Inverse Proportion
+Inverse Square Law
+Invisible Rays
+Ion
+Ionization
+Iridescence
+Isothermal
+Jet
+Jet Propulsion
+Joule
+Kelvin
+Kepler 
+Key
+Kilogram
+Kilowatt Hour 
+Kinematics 
+Kinetic Energy 
+Kinetic Theory 
+Lactometer
+Laser
+Latent Heat
+Lateral Displacement
+Lateral Inversion
+Lathe
+Law of Conservation Of Energy
+Law of Inertia
+Law of Reflection
+Law of Universal Gravitation
+Lepton
+Lever
+Lifebuoys
+Light Emitting Diode
+Like Charges
+Like Poles
+Linear Accelerator
+Linear Expansion
+Liquefaction
+Liquid
+Liquid Crystal Diode
+Load Distance
+Load Force
+Loadstone
+Local Action
+Longitudinal Wave
+Loudness
+Lubricant
+Lumen
+Luminous Flux
+Lunar Eclipse
+Lux
+Magic Lantern
+Magnetic Field
+Magnetic Force
+Magnetic Induction
+Magnifying Power
+Magnitude
+Malleability
+Manometer
+Mass
+Matter
+Mechanical Advantage
+Medium
+Melody
+Melting Point
+Meniscus
+Microscope
+Minimum Deviation
+Mirage
+Mist
+Momentum
+Musical Note
+Myopia
+Natural Frequency
+Net Force
+Neutrino 
+Neutron 
+Newton
+Newton-Meter
+Newton's First Law Of Motion
+Newton's Second Law Of Motion
+Newton's Third Law Of Motion
+Nodal Lines
+Node
+Non-Metal 
+Normal
+Nuclear 
+Nuclear Chain Reaction 
+Nuclear Decay Series
+Nuclear Energy 
+Nuclear Fission 
+Nuclear Fusion 
+Nuclear Radiation
+Nucleons 
+Nucleus
+Nuclide
+Objective
+Observation
+Octave
+Opaque
+Open Circuit
+Operational Definitions
+Optic Centre
+Optical Fibre
+Optics
+Orbital Motion
+Ordinary Hydrogen
+Organizing Data
+Ort Circuit
+Oscillation
+Oscillator
+Oton Bean
+Out's Hypothesis
+Overtones
+Parallax
+Partial Eclipse
+Particle
+Pendulum
+Penumbra
+Photometer
+Pitch of The Screw
+Pivot
+Plane
+Plane Mirror
+Pointer
+Polarisation
+Pole
+Porosity
+Positive Electricity
+Potential Energy
+Potentiality
+Power
+Pressure
+Principal Axis
+Pulley
+Pyknometer
+Quantized
+Quantum
+Quantum Mechanics 
+Quantum Number 
+Quantum of Light
+Quantum Theory
+Quarks
+Radiation
+Rain Gauge
+Reaction
+Reading
+Real Image
+Receiver
+Recoil
+Rectifier
+Reflection
+Refraction
+Refractive Index
+Refractometer
+Refrigerant
+Regulation
+Relative Density
+Relative Expansion
+Relative Humidity
+Relay
+Repulsion
+Reservoir
+Resistance
+Resolution of Forces
+Resonance
+Resting Point
+Resultant
+Retardation
+Rigidity
+Rim
+Rocket
+Rotatory Compressor
+Rudder
+Safety Fuse
+Satellite
+Saturation
+Screen
+Screw Thread
+Secondary Axis
+Sensitized
+Shaft
+Simple Pendulum
+Siphon
+Slide Valve
+Slit
+Snow
+Solenoid
+Solidify
+Solidity
+Sonometer
+Space
+Specific Gravity
+Specific Heat
+Spectrometer
+Spectroscope
+Spectrum
+Speed
+Spherometer
+Spiral Spring
+Statics
+Stopcock
+Stop Watch
+Suction Pump
+Suction Tube
+Surface
+Surface Tension
+Swing
+Sympathetic Vibration
+Synthesis of Light
+Tachometer
+Telescope
+Temperature
+Tension
+Terminal
+Theory
+Thermal capacity
+Thermal couple
+Thermodynamics
+Thermoscope
+Thermostat
+Thickness
+Thrust
+Tone
+Torsion
+Total internal reflection
+Transformer
+Translucent
+Transmitter
+Transparent
+Transverse vibration
+Turbine
+Tuning fork
+Turning point
+Ultimate Stress
+Ultrasonic 
+Ultrasonic Cleaners 
+Ultrasonic Waves 
+Ultrasound 
+Ultraviolet
+Ultraviolet Radiation 
+Ultraviolet Rays 
+Umbra
+Unbalanced Force
+Uncertainty Principle 
+Unit
+Universal Gravitation
+Unsaturated
+Up Quarks
+UV
+Vacuum
+Vacuum Brake
+Vacuum Tube 
+Valence Electrons
+Valve
+Vaporization
+Vapour Pressure
+Vector 
+Vector Addition 
+Vector Resolution 
+Velocity
+Velocity of Sound 
+Vertical Motion
+Vibration
+Virtual Image
+Viscosity 
+Visible Light 
+Visible Radiation 
+Visible Spectrum
+Vocal Chord
+Vocal Cords 
+Volatile
+Volta Meter
+Voltmeter
+Volume
+Volume of A Cylinder 
+Volume of Sphere
+Water Equivalent
+Water Level
+Water Wheel
+Wave Front
+Wave Length
+Wave Theory
+Wheel And Axle
+Winding and Axle
+Winding
+Wound 
+Watt 
+Watts 
+Wave 
+Wavelength 
+Weak Force 
+Weight 
+White 
+Work Function
+X Rays
+Xwell's Law of Induction
+Zero Error
+Zener Diode 
