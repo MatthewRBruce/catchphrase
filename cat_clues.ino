@@ -79,7 +79,7 @@ File readFile(const char * filename) {
 		infile.read(curline,LINELEN);
 		categories[i] = (char *)malloc(sizeof(char) * LINELEN);
 		strcpy(categories[i],rtrim(curline));
-		printf("%s\n",categories[i]);
+		Serial.println(categories[i]);
 	}
 
 	while(infile.available()) {

@@ -14,12 +14,17 @@ byte CATEGORY_PIN = 20;
 byte SPEAKER_PIN = 7;
 
 // Picked these randomly - Scott
-byte LCD_PIN_RS = 10;
-byte LCD_PIN_E  = 11;
-byte LCD_PIN_D4 = 12;
-byte LCD_PIN_D5 = 13;
-byte LCD_PIN_D6 = 14;
-byte LCD_PIN_D7 = 15;
+byte LCD_PIN_RS = 8;
+byte LCD_PIN_E  = 9;
+byte LCD_PIN_D4 = 10;
+byte LCD_PIN_D5 = 11;
+byte LCD_PIN_D6 = 12;
+byte LCD_PIN_D7 = 13;
+
+byte SD_PIN_CS = 53;
+//byte SD_PIN_DI = 10;
+//byte SD_PIN_SCK = 9;
+//byte SD_PIN_DO = 8;
 
 extern unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
@@ -182,6 +187,7 @@ void setup() {
   play_beep(BEEP_POWER_ON);
   delay(2000);// Give reader a chance to see the output.
 
+  
   game_state = CATEGORY_SELECTION;
 
   pinMode(TEAM1_PIN,INPUT_PULLUP);
@@ -199,6 +205,18 @@ void setup() {
 
   // Initialize the LCD (16 columns, 2 rows)
   lcd.begin(16, 2);
+
+    Serial.print("Initializing SD card...");
+
+  if (!SD.begin(53)) {
+    Serial.println("initialization failed!");
+    updateDisplay("SD Card Failure!");
+    return; 
+  }
+  Serial.println("initialization done.");
+  Serial.println("Initialized SD Card Reader");
+
+  Serial.println("Being Read File");
   cluefile = readFile("catchphrase.txt");
   updateDisplay(categories[cur_category]);
 }
