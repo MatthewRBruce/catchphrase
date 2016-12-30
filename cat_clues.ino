@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <SD.h>
+
+
 #include "cat_clues.h"
 
-#define LINELEN 25
 //Format of the Clue File:
 // <Number of Categories>
 // <CATEGORY>
@@ -27,15 +27,17 @@
 int NUM_CATEGORIES;
 
 char ** categories = 0;
-int * category_offsets = 0;
-int * category_len = 0;
+unsigned long * category_offsets = 0;
+unsigned long * category_len = 0;
+char * curline = new char[LINELEN+1];
 
 
 
 char * rtrim(char * strin) {
 	for (int i = strlen(strin) - 1; i >= 0; i--) {
 		if (strin[i] == '\0') continue;
-		else if (strin[i] == ' ' || strin[i] == '\t' || strin[i] == '\n') strin[i] = '\0';
+		else if (strin[i] == ' ' || strin[i] == '\t' || strin[i] == '\n' || strin[i] == '\r'){ strin[i] = '\0';
+		}
 		else return strin;
 	}
 	return strin;
@@ -52,27 +54,27 @@ File readFile(const char * filename) {
 
 	File infile;
 	int curcategory = 1;
-	char * curline = new char[LINELEN];
 	
-	memset(&curline[0],0,LINELEN);
+	memset(&curline[0],0,LINELEN+1);
 
 	infile = SD.open(filename,FILE_READ);
-	
+
 	//How many categoies are there in the file?
 	infile.read(curline,LINELEN);
 	
-	NUM_CATEGORIES = atoi(curline) + 1; //Add 1 to the number of categories for 'Everything'
-	
+	NUM_CATEGORIES = atoi(rtrim(curline)) + 1; //Add 1 to the number of categories for 'Everything'
+	Serial.print("Categories: ");
+  Serial.println(NUM_CATEGORIES);
 	categories = (char **)malloc(NUM_CATEGORIES * sizeof(char *));	
-	category_offsets = (int *)malloc(NUM_CATEGORIES * sizeof(int)); 
-	category_len = (int *)malloc(NUM_CATEGORIES * sizeof(int)); 
+	category_offsets = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
+	category_len = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
 	
 	//Tack in the 'Everything' Category
 	categories[0] = (char *)malloc(sizeof(char) * LINELEN);
 	categories[0] = strcpy(categories[0],"Everything");
 	category_len[0] = 0;
 	category_offsets[0] = 0;
-	printf("%s\n",categories[0]);
+	Serial.println(categories[0]);
 
 	//starting at 1 because 0 is everything
 	for (int i = 1; i < NUM_CATEGORIES; i++) {
@@ -87,8 +89,10 @@ File readFile(const char * filename) {
 		
 		//Blank line indicating a category boundary?
 		if (strlen(rtrim(curline)) == 0) {
+Serial.print("found an empty line -- ");
 			category_offsets[curcategory] = infile.position();
-			//If this is the first category, we can't caluclate the number of clues yet, since we dont know where it will end
+Serial.println(infile.position());
+			//If this is the first category, we can't calculate the number of clues yet, since we don't know where it will end
 			//Otherwise, calculate the number of clues that were in the previous category
 			if (curcategory > 1) {
 				category_len[curcategory - 1] = ((category_offsets[curcategory] - category_offsets[curcategory - 1]) / LINELEN) - 1; 
@@ -102,6 +106,14 @@ File readFile(const char * filename) {
 	category_len[curcategory - 1] = (infile.position() - category_offsets[curcategory - 1]) / LINELEN;
 	category_len[0] = category_len[0] + category_len[curcategory - 1];
 
+  Serial.println("---- cat 2: " + get_category_as_string(2));
+  for (int i = 0; i < NUM_CATEGORIES; ++i)
+  {
+     Serial.println(categories[i]);
+     Serial.println(category_len[i]);
+     Serial.println(category_offsets[i]);
+  }
+
 	return infile;
 }
 
@@ -110,18 +122,25 @@ File readFile(const char * filename) {
 // a file decrription, return a random clue from the category
 char * get_clue(int category, File cluefile) {
 	
-	int seekpos = -1;
-	int curclue = -1;
-	char * curline = new char[LINELEN];
+	unsigned long seekpos = 0;
+	unsigned long curclue = 0;
 
 	//If Everything, pick a random category that isn't Evertyhing
 	if (category == 0) {
+    // TODO: Consider weighing them
 		category = (rand() % (NUM_CATEGORIES - 1)) + 1;
 	}
 	curclue = rand() % category_len[category];
 	seekpos = category_offsets[category] + curclue * LINELEN;
 	cluefile.seek(seekpos);
 	cluefile.read(curline,LINELEN);
+
+ Serial.println("clue: " + String(curline));
+ Serial.print("seekpos/curclue: ");
+ Serial.print(seekpos);
+ Serial.print("/");
+ Serial.print(curclue);
+
 	return rtrim(curline);
 }
 

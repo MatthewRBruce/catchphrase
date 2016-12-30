@@ -1,13 +1,12 @@
 #ifndef CLUES_H
 #define CLUES_H
-#include <SD.h>
-#define LINELEN 25
+#define LINELEN 26
+#include "SdFat.h"
+SdFat SD;
 
 extern int NUM_CATEGORIES;
 	
 extern char ** categories; 
-extern int * category_offsets; 
-extern int * category_len;
 
 // void readfile(char *)
 // Read the clue file

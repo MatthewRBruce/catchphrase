@@ -183,6 +183,9 @@ void updateDisplay(String displayString) {
 
 void setup() {
   Serial.begin(9600);
+   while (!Serial) {
+    delay(10); // wait for serial port to connect. Needed for native USB port only
+  }
   Serial.println("Catch Phrase - Power On");
   play_beep(BEEP_POWER_ON);
   delay(2000);// Give reader a chance to see the output.
@@ -217,7 +220,7 @@ void setup() {
   Serial.println("Initialized SD Card Reader");
 
   Serial.println("Being Read File");
-  cluefile = readFile("catchphrase.txt");
+  cluefile = readFile("clues.txt");
   updateDisplay(categories[cur_category]);
 }
 
