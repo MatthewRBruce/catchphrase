@@ -96,45 +96,68 @@ enum BEEP_TYPE {
 
 //440 -> 490 -> 440 for score reset?
 
-// Just output for now
+// Play the tones, and print them to the console
 void play_beep(BEEP_TYPE beep) {
   Serial.print("BEEP - ");  
   switch (beep) {
     case BEEP_TIC:
-      analogWrite(SPEAKER_PIN,2);
-      delay(100);
-      analogWrite(SPEAKER_PIN,0);
       Serial.println("TIC");
+      // Example with PWM:
+      // analogWrite(SPEAKER_PIN,2);
+      // delay(100);
+      // analogWrite(SPEAKER_PIN,0);
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TOC:
-      analogWrite(SPEAKER_PIN,2);
-      delay(100);
-      analogWrite(SPEAKER_PIN,0);           
       Serial.println("TOC");
+      // Example with PWM:
+      // analogWrite(SPEAKER_PIN,2);
+      // delay(100);
+      // analogWrite(SPEAKER_PIN,0);  
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TIMES_UP:
       Serial.println("TIMES_UP");
+      tone(SPEAKER_PIN, 300, 300);
+      delay(300);
+      tone(SPEAKER_PIN, 300, 300);
+      delay(300);
+      tone(SPEAKER_PIN, 300, 300);
       break;
     case BEEP_POWER_ON:
       Serial.println("POWER_ON");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_CATEGORY_CHANGE:
       Serial.println("CATEGORY_CHANGE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_CHANGE:
       Serial.println("SCORE_CHANGE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_RESET:
       Serial.println("SCORE_RESET");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_WIN_GAME:
       Serial.println("WIN_GAME");
+      for (int i = 0; i < 3; ++i) {
+        tone(SPEAKER_PIN, 300, 250);
+        delay(100);
+        tone(SPEAKER_PIN, 400, 250);
+        delay(100);
+        tone(SPEAKER_PIN, 500, 250);
+        delay(100);
+      }
       break;
     case BEEP_STOP_ROUND:
       Serial.println("STOP_ROUND");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_EXIT_GAME_DONE_STATE:
       Serial.println("EXIT_GAME_DONE_STATE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
   }
 }
