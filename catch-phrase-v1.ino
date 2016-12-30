@@ -232,7 +232,16 @@ void rotate_category() {
 }
 
 void update_clue() {
-  cur_clue = get_clue_as_string(cur_category,cluefile);
+  while (true) {
+    cur_clue = get_clue_as_string(cur_category,cluefile);
+    
+    // Performance sin coming up: calling get_display_text()
+    // to check if it fits on LCD, and then again to actually
+    // display it.  Oops.
+    if (get_display_text(cur_clue).length() > 0) {
+      break;
+    }
+  }
 }
 
 
