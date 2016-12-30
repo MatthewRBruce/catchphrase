@@ -1,4 +1,3 @@
-#define byte uint8_t
 #ifndef BUTTON_H
 #define BUTTON_H
 

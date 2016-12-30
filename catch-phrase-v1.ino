@@ -3,7 +3,6 @@
 #include "button.h"
 #include "cat_clues.h"
 
-#define byte uint8_t
 #define MAX_LONG 4294967295
 
 byte TEAM1_PIN = 2;
