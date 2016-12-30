@@ -49,7 +49,9 @@ enum GAME_STATES {CATEGORY_SELECTION,IN_ROUND,GAME_DONE};
 
 GAME_STATES game_state = CATEGORY_SELECTION;
 
+bool is_category_displayed_category_selection_mode = true;
 int cur_category = 0;
+String cur_clue = "";
 
 // Tic-toc related constants and state variables
 
@@ -229,6 +231,11 @@ void rotate_category() {
   }
 }
 
+void update_clue() {
+  cur_clue = get_clue_as_string(cur_category,cluefile);
+}
+
+
 void start_new_round() {
   game_state = IN_ROUND;
 
@@ -239,7 +246,12 @@ void start_new_round() {
   last_beep_speed_change_millis = millis(); // since we just changed the frequency
 
   // Update the display
-  updateDisplay(get_clue_as_string(cur_category,cluefile));
+  update_clue();
+  updateDisplay(cur_clue);
+
+  // When we get back to category selection, we want to still
+  // show the clue, not the category.
+  is_category_displayed_category_selection_mode = false;
 }
 
 void end_current_round() {
@@ -258,6 +270,9 @@ void end_game() {
     updateDisplay("Brunettes Win!");
   }
   game_state = GAME_DONE;
+
+  // Back into "show the category" mode
+  is_category_displayed_category_selection_mode = true;
 }
 
 
@@ -318,6 +333,10 @@ void loop() {
         }
 
         if (button_category.just_pressed()) {
+          // This button push puts us into category-display mode if we
+          // weren't already there.
+          is_category_displayed_category_selection_mode = true;
+
           play_beep(BEEP_CATEGORY_CHANGE);
           rotate_category();
           updateDisplay(categories[cur_category]);
@@ -336,12 +355,10 @@ void loop() {
         else if (button_team1.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team1;
-          updateDisplay(categories[cur_category]);
         }
         else if (button_team2.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team2;
-          updateDisplay(categories[cur_category]);
         }
         if (score_team1 == 7 || score_team2 == 7) \
         {
@@ -353,6 +370,12 @@ void loop() {
         // have been pushed will update the display.  Note the the start/stop
         // button push won't end up here since we break in that case.  Same with the
         // game over case.
+        // Update with clue or category depending on what's needed.
+        if (is_category_displayed_category_selection_mode) {
+          updateDisplay(categories[cur_category]);
+        } else {
+          updateDisplay(cur_clue);
+        }
         
         break;
       case IN_ROUND:
@@ -367,7 +390,8 @@ void loop() {
         }
         if (button_next.just_pressed()) {
           // No sound on this event
-          updateDisplay(get_clue_as_string(cur_category,cluefile));
+          update_clue();
+          updateDisplay(cur_clue);
         }
         do_tic_toc();
         break;
