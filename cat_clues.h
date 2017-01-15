@@ -3,7 +3,6 @@
 #define LINELEN 26
 #include "SdFat.h"
 SdFat SD;
-
 extern int NUM_CATEGORIES;
 	
 extern char ** categories; 

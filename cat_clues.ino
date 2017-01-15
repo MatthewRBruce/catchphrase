@@ -4,7 +4,6 @@
 
 
 #include "cat_clues.h"
-
 //Format of the Clue File:
 // <Number of Categories>
 // <CATEGORY>
