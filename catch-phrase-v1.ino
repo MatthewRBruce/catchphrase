@@ -21,14 +21,14 @@ byte LCD_PIN_D4 = 10;
 byte LCD_PIN_D5 = 11;
 byte LCD_PIN_D6 = 12;
 byte LCD_PIN_D7 = 13;
-byte LCD_PIN_BL = 6;
+byte LCD_PIN_BL = 26;
 byte SD_PIN_CS = 53;
 //byte SD_PIN_DI = 10;
 //byte SD_PIN_SCK = 9;
 //byte SD_PIN_DO = 8;
 
-#define SLEEP_HARD_TIME 120000
-#define SLEEP_DIM_TIME 60000
+#define SLEEP_HARD_TIME 600000
+#define SLEEP_DIM_TIME 120000
 bool backlight = true;
 
 extern unsigned long subtract_times(unsigned long t1, unsigned long t2);
@@ -193,10 +193,13 @@ void wake_interrupt_callback() {
 
 void sleep_power_down() {
 	Serial.println("Going into Power Down State");
+  Serial.flush();
+  delay(2000);
 	sleep_enable();
-	attachInterrupt(START_STOP_PIN, wake_interrupt_callback, LOW);
+	attachInterrupt(digitalPinToInterrupt(START_STOP_PIN), wake_interrupt_callback, LOW);
 	
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  	
 	cli();
 	//sleep_bod_disable();
 	sei();
@@ -430,15 +433,15 @@ void loop() {
 		}
 
 		//Sleep Code
-		if (millis() - Button::get_last_button_press() > SLEEP_HARD_TIME) { 
+		if (millis() - Button::get_last_button_press() >= SLEEP_HARD_TIME) { 
 			// Put the Arduino into power down state
 			sleep_power_down();	
-		} else if (millis() - Button::get_last_button_press() > SLEEP_DIM_TIME) {
+		} else if (millis() - Button::get_last_button_press() >= SLEEP_DIM_TIME && backlight) {
 			//Dim the backlight
 			Serial.println("Turning off Backlight");
 			backlight = false;
 			digitalWrite(LCD_PIN_BL,LOW);
-		} else if (backlight == false) {
+		} else if (millis() - Button::get_last_button_press() < SLEEP_DIM_TIME && backlight == false) {
 			// Our backlight was dimmed, but we shouldn't be in a dim state anymore
 			Serial.println("Turning on Backlight");
 			backlight = true;
