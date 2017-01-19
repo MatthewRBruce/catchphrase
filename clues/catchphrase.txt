@@ -1,7 +1,6 @@
-4                        
+3                        
 People                   
 Science                  
-After Dark               
 Inside Jokes             
                          
 Adele                    
@@ -18,7 +17,6 @@ Amedeo Avogadro
 Amy Adams                
 Andre Agasi              
 Andre Agassi             
-Anouk Aimée              
 Ansel Adams              
 Army Archerd             
 Art Alexakis             
@@ -85,7 +83,6 @@ Amelia Earhart
 Anita Ekberg             
 A.J. Foyt                
 Ace Frehley              
-Agnetha Fältskog         
 Albert Finney            
 Alice Faye               
 Allen Funt               
@@ -189,7 +186,6 @@ Audie Murphy
 Audrey Meadows           
 Aaron Neville            
 Alfred Nobel             
-Anaïs Nin                
 Anthony Newley           
 Anita ODay               
 Annie Oakley             
@@ -214,7 +210,6 @@ Alan Rickman
 Alan Ruck                
 Alex Rodriguez           
 Alfonso Ribeiro          
-Amália Rodrigues         
 Andy Roddick             
 Andy Rooney              
 Anika Noni Rose          
@@ -328,7 +323,6 @@ Brigitte Bardot
 Buffalo Bill             
 Burt Bacharach           
 Busby Berkeley           
-Béla Bartók              
 Barbara Carrera          
 Ben Crenshaw             
 Bert Convy               
@@ -431,7 +425,6 @@ Ben Kingsley
 Beyonce Knowles          
 Billie Jean King         
 Billy the Kid            
-Bob Captain Kangaroo Keeshan
 Bobby Knight             
 Boris Karloff            
 Brian Keith              
@@ -525,7 +518,6 @@ Betty Thomas
 Billy Bob Thornton       
 Bishop Desmond Tutu      
 Booker T                 
-Björn Ulvaeus            
 Bob Uecker               
 Bobby Unser              
 Brendon Urie             
@@ -566,7 +558,6 @@ Christina Aguilara
 Claude Akins             
 Cliff Arquette           
 Criss Angel              
-Cüneyt Arkin             
 Camilla Parker Bowles    
 Candace Bergen           
 Candice Bergen           
@@ -619,7 +610,6 @@ Clive Cussler
 Connie Chung             
 Cris Collinsworth        
 Cyd Charisse             
-César Chávez             
 Cameron Diaz             
 Catherine Deneuve        
 Cecil B. DeMille         
@@ -778,9 +768,7 @@ Carroll Spinney
 Casey Stengel            
 Cat Stevens              
 Charles Schulz           
-Charles Tom Thumb Stratton
 Charlie Sheen            
-Chesley Sully Sullenberger
 Chiang Kai Shek          
 Chris Schenkel           
 Chris Squire             
@@ -1133,7 +1121,6 @@ Eddie Bracken
 Edgar Bergen             
 Edgar Rice Burroughs     
 Eileen Brennan           
-Elizabeth Barrett Browning
 Ellen Barkin             
 Ellen Burstyn            
 Emily Bronte             
@@ -1300,7 +1287,6 @@ Foxy Brown
 Francis Bacon            
 Frank Borman             
 Freddie Blassie          
-Felipe Calderón          
 Fidel Castro             
 Francis Coppala          
 Francis Coppola          
@@ -1328,7 +1314,6 @@ Frank Gorshin
 Fred Gwynne              
 Faith Hill               
 Felicity Huffman         
-Friedensreich Hundertwasser
 Francis Scott Key        
 Franz Kafka              
 Frida Kahlo              
@@ -1337,7 +1322,6 @@ Frank Langella
 Frankie Laine            
 Franz Liszt              
 Frederick Loewe          
-Ferdinand Jelly Roll Morton
 Frank Tug McGraw         
 Frankie Manning          
 Fred MacMurray           
@@ -1632,8 +1616,6 @@ Harold Lloyd
 Harper Lee               
 Heath Ledger             
 Heather Locklear         
-Henry Wadsworth Longfellow
-Huddie Lead Belly Ledbetter
 Harry Morgan             
 Harvey Milk              
 Hayley Mills             
@@ -1795,7 +1777,6 @@ James Caviezel
 James Coburn             
 Jamie Lee Curtis         
 Jane Curtin              
-Jean Chrétien            
 Jean Cocteau             
 Jeanne Crain             
 Jeff Chandler            
@@ -1831,7 +1812,6 @@ Jon Cryer
 Joseph Campanella        
 Joseph Conrad            
 Joseph Cotten            
-José Canseco             
 Juan Carlos              
 Judy Collins             
 Julia Child              
@@ -1887,8 +1867,6 @@ Joe Frazier
 Joey Fatone              
 John Ford                
 John Forsythe            
-José Feliciano           
-José Ferrer              
 Jules Feiffer            
 June Foray               
 J. Paul Getty            
@@ -2043,7 +2021,6 @@ Jillian Michaels
 Jim McKay                
 Jim Messina              
 Jim Morrison             
-Joan Miró                
 Joe Montana              
 Joel McCrea              
 John Madden              
@@ -2061,7 +2038,6 @@ Johnny Mathis
 Johnny Mercer            
 Johnny Miller            
 Joni Mitchell            
-José Marti               
 Julian McMahon           
 Julianne Moore           
 Juliet Mills             
@@ -2110,7 +2086,6 @@ Joseph Pulitzer
 Juan Peron               
 Juliet Prowse            
 J.K. Rowling             
-J.P. Big Bopper Richardson
 Jackie Robinson          
 James Earl Ray           
 James Randi              
@@ -2290,7 +2265,6 @@ Kim Jong Il
 Kareem Abdul Jabbar      
 Kate Jackson             
 Kim Jong-Il              
-Kala Sosefina Mileniume Kauvaka
 Keira Knightley          
 Ken Kesey                
 Kim Kardashian           
@@ -2375,7 +2349,6 @@ Louis Braille
 Louis Brandeis           
 Lucille Ball             
 Ludwig van Beethoven     
-Luis Buñuel              
 Luis Miguel Basteri      
 Luther Burbank           
 LL Cool-J                
@@ -2567,7 +2540,6 @@ Mitch Albom
 Mohammad Ali             
 Morey Amsterdam          
 Muhammad Ali             
-Mädchen Amick            
 Maria Bello              
 Marion Barry             
 Marlon Brando            
@@ -2812,7 +2784,6 @@ Martin Scorsese
 Martin Sheen             
 Martin Short             
 Mary Queen of Scots      
-Mary Wollstonecraft Shelley
 Maureen Stapleton        
 Maurice Sendak           
 Max Steiner              
@@ -2883,7 +2854,6 @@ Neve Campbell
 Nick Carter              
 Nick Cave                
 Nicolas Cage             
-Noël Coward              
 Napolean Dynomite        
 Neil Diamond             
 Nelson Eddy              
@@ -3005,7 +2975,6 @@ Oskar Werner
 Pat                      
 Pel?                     
 Pele                     
-Pelé                     
 Perlman                  
 Phoenix                  
 Pink                     
@@ -3132,7 +3101,6 @@ Pope John Paul
 Priscilla Presley        
 Pat Riley                
 Patrick Roy              
-Paul Pee-wee Herman Reubens
 Paul Reiser              
 Paul Revere              
 Paul Robeson             
@@ -3221,7 +3189,6 @@ Robby Benson
 Robert Benchley          
 Robert Blake             
 Robert Burns             
-Roberto Gomez Bolaños    
 Roger Bannister          
 Rona Barrett             
 Roscoe Lee Browne        
@@ -3418,7 +3385,6 @@ Rosalind Russell
 Roy Rogers               
 R.L. Stine               
 Rachel Stevens           
-Raven Symoné             
 Ravi Shankar             
 Richard Red Skelton      
 Richard Simmons          
@@ -3473,7 +3439,6 @@ Ruth Westheimer
 Robert Young             
 Robin Yount              
 Renee Zellweger          
-Renée Zellweger          
 Rob Zombie               
 Robert Zemeckis          
 Sade                     
@@ -3598,7 +3563,6 @@ Sterling Holloway
 Steve Hackett            
 Susan Hayward            
 Susanna Hoffs            
-Steve Crocodile Hunter Irwin
 Steve Irwin              
 Samuel L. Jackson        
 Scarlett Johansson       
@@ -3878,7 +3842,6 @@ Tom Stoppard
 Tommy Shaw               
 Tony Shalhoub            
 Tony Soprano             
-Türkan Soray             
 Tanya Tucker             
 Ted Turner               
 Teresa Teng              
@@ -4188,16 +4151,16 @@ watch glass
 weather                  
 weigh                    
 zoology                  
-	                        
-Wine night	              
-Pretentious	             
-Arrogant	                
-Butterfly bandage	       
-Fatigued	                
-Washers	                 
-Panty shots	             
-Weeeeee!	                
-Mocha	                   
+                         
+Wine night               
+Pretentious              
+Arrogant                 
+Butterfly bandage        
+Fatigued                 
+Washers                  
+Panty shots              
+Weeeeee!                 
+Mocha                    
 Shannon-Itchy            
 The TIMING               
 On The Spectrum          

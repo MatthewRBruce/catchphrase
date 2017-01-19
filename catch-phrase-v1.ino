@@ -10,19 +10,19 @@
 byte START_STOP_PIN = 2;
 byte TEAM1_PIN = 3;
 byte TEAM2_PIN = 4;
-byte NEXT_PIN = 19;
-byte CATEGORY_PIN = 20;
+byte NEXT_PIN = 5;
+byte CATEGORY_PIN = 6;
 byte SPEAKER_PIN = 7;
 
 // Picked these randomly - Scott
 byte LCD_PIN_RS = 8;
 byte LCD_PIN_E	= 9;
-byte LCD_PIN_D4 = 10;
-byte LCD_PIN_D5 = 11;
-byte LCD_PIN_D6 = 12;
-byte LCD_PIN_D7 = 13;
+byte LCD_PIN_D4 = 18;
+byte LCD_PIN_D5 = 19;
+byte LCD_PIN_D6 = 20;
+byte LCD_PIN_D7 = 21;
 byte LCD_PIN_BL = 26;
-byte SD_PIN_CS = 53;
+byte SD_PIN_CS = 10;
 //byte SD_PIN_DI = 10;
 //byte SD_PIN_SCK = 9;
 //byte SD_PIN_DO = 8;
