@@ -4,6 +4,7 @@
 
 
 #include "cat_clues.h"
+#include "serial.h"
 //Format of the Clue File:
 // <Number of Categories>
 // <CATEGORY>
@@ -62,8 +63,8 @@ File readFile(const char * filename) {
 	infile.read(curline,LINELEN);
 	
 	NUM_CATEGORIES = atoi(rtrim(curline)) + 1; //Add 1 to the number of categories for 'Everything'
-	Serial.print("Categories: ");
-  Serial.println(NUM_CATEGORIES);
+	print("Categories: ");
+  print(NUM_CATEGORIES);
 	categories = (char **)malloc(NUM_CATEGORIES * sizeof(char *));	
 	category_offsets = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
 	category_len = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
@@ -73,14 +74,14 @@ File readFile(const char * filename) {
 	categories[0] = strcpy(categories[0],"Everything");
 	category_len[0] = 0;
 	category_offsets[0] = 0;
-	Serial.println(categories[0]);
+	print(categories[0]);
 
 	//starting at 1 because 0 is everything
 	for (int i = 1; i < NUM_CATEGORIES; i++) {
 		infile.read(curline,LINELEN);
 		categories[i] = (char *)malloc(sizeof(char) * LINELEN);
 		strcpy(categories[i],rtrim(curline));
-		Serial.println(categories[i]);
+		print(categories[i]);
 	}
 
 	while(infile.available()) {
@@ -88,9 +89,7 @@ File readFile(const char * filename) {
 		
 		//Blank line indicating a category boundary?
 		if (strlen(rtrim(curline)) == 0) {
-Serial.print("found an empty line -- ");
 			category_offsets[curcategory] = infile.position();
-Serial.println(infile.position());
 			//If this is the first category, we can't calculate the number of clues yet, since we don't know where it will end
 			//Otherwise, calculate the number of clues that were in the previous category
 			if (curcategory > 1) {
@@ -105,12 +104,11 @@ Serial.println(infile.position());
 	category_len[curcategory - 1] = (infile.position() - category_offsets[curcategory - 1]) / LINELEN;
 	category_len[0] = category_len[0] + category_len[curcategory - 1];
 
-  Serial.println("---- cat 2: " + get_category_as_string(2));
   for (int i = 0; i < NUM_CATEGORIES; ++i)
   {
-     Serial.println(categories[i]);
-     Serial.println(category_len[i]);
-     Serial.println(category_offsets[i]);
+     print(categories[i]);
+     print(category_len[i]);
+     print(category_offsets[i]);
   }
 
 	return infile;
@@ -134,11 +132,11 @@ char * get_clue(int category, File cluefile) {
 	cluefile.seek(seekpos);
 	cluefile.read(curline,LINELEN);
 
- Serial.println("clue: " + String(curline));
- Serial.print("seekpos/curclue: ");
- Serial.print(seekpos);
- Serial.print("/");
- Serial.print(curclue);
+ print("clue: " + String(curline));
+ print("seekpos/curclue: ");
+ print(seekpos);
+ print("/");
+ print(curclue);
 
 	return rtrim(curline);
 }
