@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 #include "cat_clues.h"
 #include "serial.h"
 //Format of the Clue File:
@@ -30,8 +29,6 @@ char ** categories = 0;
 unsigned long * category_offsets = 0;
 unsigned long * category_len = 0;
 char * curline = new char[LINELEN+1];
-
-
 
 char * rtrim(char * strin) {
   for (int i = strlen(strin) - 1; i >= 0; i--) {
@@ -121,7 +118,7 @@ char * get_clue(int category, File cluefile) {
     // To weight the categories by the number of entries in them, pick a
     // random number between 0 and total # of clues and see in which
     // category it falls.
-    int randomOffset = rand() % category_len[0];
+    int randomOffset = random(category_len[0]);
     int count = 0;
 
     // Start i at 1 because it's the first non-everything category
@@ -137,7 +134,7 @@ char * get_clue(int category, File cluefile) {
     }
   }
 
-  curclue = rand() % category_len[category];
+  curclue = random(category_len[category]);
   seekpos = category_offsets[category] + curclue * LINELEN;
   cluefile.seek(seekpos);
   cluefile.read(curline,LINELEN);

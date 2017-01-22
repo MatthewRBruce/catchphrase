@@ -31,7 +31,14 @@ byte SD_PIN_CS = 10;
 //#define SLEEP_HARD_TIME 30000
 //#define SLEEP_DIM_TIME 15000
 
+// How long to wait before acknoledging button pushes after a sleep mode
+#define SLEEP_HOLD_TIME 100
+
+long end_of_sleep_hold_time = 0;
+
 bool backlight = true;
+
+
 
 extern unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
@@ -83,6 +90,9 @@ unsigned long last_tictoc_millis = 0;
 
 // Last time we sped up the tic/toc
 unsigned long last_beep_speed_change_millis = 0;
+
+// Track if we've seeded the rng
+bool rng_seeded = false;
 
 // File Descriptor for clue file on the SD card
 File cluefile;
@@ -252,14 +262,14 @@ void sleep_power_down() {
   updateDisplay(categories[cur_category]);
   Button::reset_last_button_press();
 
+  end_of_sleep_hold_time = millis() + SLEEP_HOLD_TIME;
+  is_category_displayed_category_selection_mode = true;
+
   sleep_disable();
 }
 
 
-
-
 void setup() {
-  srand(time(0));
   if (SERIAL_CONSOLE_ENABLE) {
     Serial.begin(9600);
      while (!Serial) {
@@ -270,7 +280,6 @@ void setup() {
   println("Catch Phrase - Power On");
   play_beep(BEEP_POWER_ON);
   delay(2000);// Give reader a chance to see the output.
-
   
   game_state = CATEGORY_SELECTION;
 
@@ -279,7 +288,6 @@ void setup() {
   pinMode(START_STOP_PIN,INPUT_PULLUP);
   pinMode(NEXT_PIN,INPUT_PULLUP);
   pinMode(CATEGORY_PIN,INPUT_PULLUP);
-
 
   digitalWrite(TEAM1_PIN,HIGH);
   digitalWrite(TEAM2_PIN,HIGH);
@@ -290,7 +298,7 @@ void setup() {
   // Initialize the LCD (16 columns, 2 rows)
   lcd.begin(16, 2);
 
-    print("Initializing SD card...");
+  print("Initializing SD card...");
 
   if (!SD.begin(SD_PIN_CS)) {
     println("initialization failed!");
@@ -413,6 +421,27 @@ void loop() {
     button_next.update_advertised_state();
     button_category.update_advertised_state();
 
+    // If it's too soon after a sleep mode, loop for a little while
+    // to allow the start/stop button push edge to be registered without
+    // starting a round
+    if (millis() < end_of_sleep_hold_time) {
+      return;
+    }
+    
+
+    // Use the time of the first button as a source of entropy to seed
+    // the RNG.
+    if (!rng_seeded && (
+          button_team1.just_pressed() ||
+          button_team2.just_pressed() ||
+          button_start_stop.just_pressed() ||
+          button_next.just_pressed() ||
+          button_category.just_pressed()
+       )) {
+      randomSeed(micros());
+      rng_seeded = true;
+    }
+
     switch (game_state) {
       case CATEGORY_SELECTION:
         if (button_start_stop.just_pressed()) {
@@ -463,10 +492,12 @@ void loop() {
         // button push won't end up here since we break in that case.  Same with the
         // game over case.
         // Update with clue or category depending on what's needed.
-        if (is_category_displayed_category_selection_mode) {
-          updateDisplay(categories[cur_category]);
-        } else {
-          updateDisplay(cur_clue);
+        if (button_team1.just_pressed() || button_team2.just_pressed()) {
+          if (is_category_displayed_category_selection_mode) {
+            updateDisplay(categories[cur_category]);
+          } else {
+            updateDisplay(cur_clue);
+          }
         }
         
         break;
@@ -503,15 +534,15 @@ void loop() {
     }
 
     //Sleep Code
-    if (millis() - Button::get_last_button_press() >= SLEEP_HARD_TIME) { 
+    if (subtract_times(millis(), Button::get_last_button_press()) >= SLEEP_HARD_TIME) { 
       // Put the Arduino into power down state
       sleep_power_down();  
-    } else if (millis() - Button::get_last_button_press() >= SLEEP_DIM_TIME && backlight) {
+    } else if (subtract_times(millis(), Button::get_last_button_press()) >= SLEEP_DIM_TIME && backlight) {
       //Dim the backlight
       println("Turning off Backlight");
       backlight = false;
       digitalWrite(LCD_PIN_BL,LOW);
-    } else if (millis() - Button::get_last_button_press() < SLEEP_DIM_TIME && backlight == false) {
+    } else if (subtract_times(millis(), Button::get_last_button_press()) < SLEEP_DIM_TIME && backlight == false) {
       // Our backlight was dimmed, but we shouldn't be in a dim state anymore
       println("Turning on Backlight");
       backlight = true;
