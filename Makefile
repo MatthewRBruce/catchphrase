@@ -75,7 +75,7 @@
        ARDUINO_DIR  = /usr/share/arduino
 #
        TARGET       = CatchPhrase
-       ARDUINO_LIBS = LiquidCrystal SD SD/utility
+       ARDUINO_LIBS = LiquidCrystal SdFat  SdFat/FatLib SdFat/SdSpiCard SPI 
 #
        BOARD_TAG    = mega2560
        ARDUINO_PORT = /dev/ttyACM0
@@ -339,7 +339,7 @@ LDFLAGS       = -mmcu=$(MCU) -Wl,--gc-sections -Os
 
 # Expand and pick the first port
 ARD_PORT      = $(firstword $(wildcard $(ARDUINO_PORT)))
-
+SD_RECURSE = True
 # Implicit rules for building everything (needed to get everything in
 # the right directory)
 #

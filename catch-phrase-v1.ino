@@ -1,29 +1,37 @@
+#include <stdlib.h>
+#include <time.h>
 #include <LiquidCrystal.h>
+//#include <SPI.h>
+#include <avr/sleep.h>
 #include "display.h"
 #include "button.h"
 #include "cat_clues.h"
+#include "serial.h"
 
 #define MAX_LONG 4294967295
 
-byte TEAM1_PIN = 2;
-byte TEAM2_PIN = 3;
-byte START_STOP_PIN = 18;
-byte NEXT_PIN = 19;
-byte CATEGORY_PIN = 20;
+byte START_STOP_PIN = 2;
+byte TEAM1_PIN = 3;
+byte TEAM2_PIN = 4;
+byte NEXT_PIN = 5;
+byte CATEGORY_PIN = 6;
 byte SPEAKER_PIN = 7;
-
-// Picked these randomly - Scott
 byte LCD_PIN_RS = 8;
 byte LCD_PIN_E  = 9;
-byte LCD_PIN_D4 = 10;
-byte LCD_PIN_D5 = 11;
-byte LCD_PIN_D6 = 12;
-byte LCD_PIN_D7 = 13;
+byte LCD_PIN_D7 = 18;
+byte LCD_PIN_D6 = 19;
+byte LCD_PIN_D5 = 20;
+byte LCD_PIN_D4 = 21;
+byte LCD_PIN_BL = 26;
+byte SD_PIN_CS = 10;
 
-byte SD_PIN_CS = 53;
-//byte SD_PIN_DI = 10;
-//byte SD_PIN_SCK = 9;
-//byte SD_PIN_DO = 8;
+#define SLEEP_HARD_TIME 600000
+#define SLEEP_DIM_TIME 120000
+// Use this to debug sleep code
+//#define SLEEP_HARD_TIME 30000
+//#define SLEEP_DIM_TIME 15000
+
+bool backlight = true;
 
 extern unsigned long subtract_times(unsigned long t1, unsigned long t2);
 
@@ -94,14 +102,12 @@ enum BEEP_TYPE {
 };
 
 
-//440 -> 490 -> 440 for score reset?
-
 // Play the tones, and print them to the console
 void play_beep(BEEP_TYPE beep) {
-  Serial.print("BEEP - ");  
+  print("BEEP - ");  
   switch (beep) {
     case BEEP_TIC:
-      Serial.println("TIC");
+      println("TIC");
       // Example with PWM:
       // analogWrite(SPEAKER_PIN,2);
       // delay(100);
@@ -109,7 +115,7 @@ void play_beep(BEEP_TYPE beep) {
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TOC:
-      Serial.println("TOC");
+      println("TOC");
       // Example with PWM:
       // analogWrite(SPEAKER_PIN,2);
       // delay(100);
@@ -117,7 +123,7 @@ void play_beep(BEEP_TYPE beep) {
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TIMES_UP:
-      Serial.println("TIMES_UP");
+      println("TIMES_UP");
       tone(SPEAKER_PIN, 300, 300);
       delay(300);
       tone(SPEAKER_PIN, 300, 300);
@@ -125,23 +131,23 @@ void play_beep(BEEP_TYPE beep) {
       tone(SPEAKER_PIN, 300, 300);
       break;
     case BEEP_POWER_ON:
-      Serial.println("POWER_ON");
+      println("POWER_ON");
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_CATEGORY_CHANGE:
-      Serial.println("CATEGORY_CHANGE");
+      println("CATEGORY_CHANGE");
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_CHANGE:
-      Serial.println("SCORE_CHANGE");
+      println("SCORE_CHANGE");
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_RESET:
-      Serial.println("SCORE_RESET");
+      println("SCORE_RESET");
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_WIN_GAME:
-      Serial.println("WIN_GAME");
+      println("WIN_GAME");
       for (int i = 0; i < 3; ++i) {
         tone(SPEAKER_PIN, 300, 250);
         delay(100);
@@ -152,11 +158,11 @@ void play_beep(BEEP_TYPE beep) {
       }
       break;
     case BEEP_STOP_ROUND:
-      Serial.println("STOP_ROUND");
+      println("STOP_ROUND");
       tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_EXIT_GAME_DONE_STATE:
-      Serial.println("EXIT_GAME_DONE_STATE");
+      println("EXIT_GAME_DONE_STATE");
       tone(SPEAKER_PIN, 300, 30);
       break;
   }
@@ -175,13 +181,11 @@ void updateDisplay(String displayString) {
 
   String formattedText = get_display_text(displayString);
 
-  // TODO: when integrated with SD, check this earlier.  At this point
-  // we can't handle it by picking the next clue
   if (formattedText.length() == 0) {
-    Serial.print("OOPS! CAN'T DISPLAY: ");
-    Serial.println(displayString);
-    Serial.print("formatted: ");
-    Serial.println(formattedText);
+    print("OOPS! CAN'T DISPLAY: ");
+    println(displayString);
+    print("formatted: ");
+    println(formattedText);
     return;
   }
 
@@ -194,23 +198,76 @@ void updateDisplay(String displayString) {
   lcd.setCursor(0, 1);
   lcd.print("  ");
   lcd.print(formattedText.substring(12));
+  lcd.print("  ");
 
-  Serial.print(score_team1);
-  Serial.print(" ");
-  Serial.print(formattedText.substring(0,12));
-  Serial.print(" ");
-  Serial.println(score_team2); 
-  Serial.print("  ");
-  Serial.print(formattedText.substring(12));
+  print(score_team1);
+  print(" ");
+  print(formattedText.substring(0,12));
+  print(" ");
+  println(score_team2); 
+  print("  ");
+  print(formattedText.substring(12));
+
+}
+
+void wake_interrupt_callback() {
+  println("Sleep Pin Interrupt triggered");
+  sleep_disable();
+  detachInterrupt(digitalPinToInterrupt(START_STOP_PIN));
+
+}
+
+void sleep_power_down() {
+  println("Going into Power Down State");
+  if (SERIAL_CONSOLE_ENABLE) {
+    Serial.flush();
+    Serial.end();
+  }
+  delay(2000);
+  sleep_enable();
+  attachInterrupt(digitalPinToInterrupt(START_STOP_PIN), wake_interrupt_callback, LOW);
+    
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    
+  cli();
+  //sleep_bod_disable();
+  sei();
+  //USBCON |= _BV(FRZCLK);
+  //PLLCSR &= ~_BV(PLLE);
+  //USBCON &= ~_BV(USBE);
+
+  println("going to sleep");
+//  updateDisplay("I'm sooooo tired");
+  sleep_cpu();
+
+  // Initialize the LCD (16 columns, 2 rows)
+  game_state = CATEGORY_SELECTION;
+
+  // Reset the game
+  println("Waking up from Sleep");
+  cur_category = 0;
+  score_team1 = 0;
+  score_team2 = 0;
+
+  updateDisplay(categories[cur_category]);
+  Button::reset_last_button_press();
+
+  sleep_disable();
 }
 
 
+
+
 void setup() {
-  Serial.begin(9600);
-   while (!Serial) {
-    delay(10); // wait for serial port to connect. Needed for native USB port only
+  srand(time(0));
+  if (SERIAL_CONSOLE_ENABLE) {
+    Serial.begin(9600);
+     while (!Serial) {
+      delay(10); // wait for serial port to connect. Needed for native USB port only
+    }
   }
-  Serial.println("Catch Phrase - Power On");
+  //SPI.begin();
+  println("Catch Phrase - Power On");
   play_beep(BEEP_POWER_ON);
   delay(2000);// Give reader a chance to see the output.
 
@@ -233,19 +290,22 @@ void setup() {
   // Initialize the LCD (16 columns, 2 rows)
   lcd.begin(16, 2);
 
-    Serial.print("Initializing SD card...");
+    print("Initializing SD card...");
 
-  if (!SD.begin(53)) {
-    Serial.println("initialization failed!");
+  if (!SD.begin(SD_PIN_CS)) {
+    println("initialization failed!");
     updateDisplay("SD Card Failure!");
     return; 
   }
-  Serial.println("initialization done.");
-  Serial.println("Initialized SD Card Reader");
+  println("initialization done.");
+  println("Initialized SD Card Reader");
 
-  Serial.println("Being Read File");
+  println("Being Read File");
   cluefile = readFile("clues.txt");
+  digitalWrite(LCD_PIN_BL,HIGH);
   updateDisplay(categories[cur_category]);
+  Button::reset_last_button_press();
+
 }
 
 void rotate_category() {
@@ -438,11 +498,25 @@ void loop() {
 
           play_beep(BEEP_EXIT_GAME_DONE_STATE);
           updateDisplay(categories[cur_category]);
-          
-          // Let the next loop() handle the display update
         }
         break;
     }
 
-}
+    //Sleep Code
+    if (millis() - Button::get_last_button_press() >= SLEEP_HARD_TIME) { 
+      // Put the Arduino into power down state
+      sleep_power_down();  
+    } else if (millis() - Button::get_last_button_press() >= SLEEP_DIM_TIME && backlight) {
+      //Dim the backlight
+      println("Turning off Backlight");
+      backlight = false;
+      digitalWrite(LCD_PIN_BL,LOW);
+    } else if (millis() - Button::get_last_button_press() < SLEEP_DIM_TIME && backlight == false) {
+      // Our backlight was dimmed, but we shouldn't be in a dim state anymore
+      println("Turning on Backlight");
+      backlight = true;
+      digitalWrite(LCD_PIN_BL,HIGH);
+      
+    }
 
+}

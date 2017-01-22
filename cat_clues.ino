@@ -4,7 +4,7 @@
 
 
 #include "cat_clues.h"
-
+#include "serial.h"
 //Format of the Clue File:
 // <Number of Categories>
 // <CATEGORY>
@@ -63,8 +63,8 @@ File readFile(const char * filename) {
   infile.read(curline,LINELEN);
   
   NUM_CATEGORIES = atoi(rtrim(curline)) + 1; //Add 1 to the number of categories for 'Everything'
-  Serial.print("Categories: ");
-  Serial.println(NUM_CATEGORIES);
+  print("Categories: ");
+  println(NUM_CATEGORIES);
   categories = (char **)malloc(NUM_CATEGORIES * sizeof(char *));  
   category_offsets = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
   category_len = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
@@ -80,7 +80,7 @@ File readFile(const char * filename) {
     infile.read(curline,LINELEN);
     categories[i] = (char *)malloc(sizeof(char) * LINELEN);
     strcpy(categories[i],rtrim(curline));
-    Serial.println(categories[i]);
+    println(categories[i]);
   }
 
   while(infile.available()) {
