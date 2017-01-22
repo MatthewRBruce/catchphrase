@@ -7,7 +7,7 @@
 #include "button.h"
 #include "cat_clues.h"
 #include "serial.h"
-#define byte uint8_t
+
 #define MAX_LONG 4294967295
 
 byte START_STOP_PIN = 2;
@@ -57,7 +57,9 @@ enum GAME_STATES {CATEGORY_SELECTION,IN_ROUND,GAME_DONE};
 
 GAME_STATES game_state = CATEGORY_SELECTION;
 
+bool is_category_displayed_category_selection_mode = true;
 int cur_category = 0;
+String cur_clue = "";
 
 // Tic-toc related constants and state variables
 
@@ -100,45 +102,68 @@ enum BEEP_TYPE {
 };
 
 
-// Just output for now
+// Play the tones, and print them to the console
 void play_beep(BEEP_TYPE beep) {
   print("BEEP - ");  
   switch (beep) {
     case BEEP_TIC:
-      analogWrite(SPEAKER_PIN,2);
-      delay(100);
-      analogWrite(SPEAKER_PIN,0);
       println("TIC");
+      // Example with PWM:
+      // analogWrite(SPEAKER_PIN,2);
+      // delay(100);
+      // analogWrite(SPEAKER_PIN,0);
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TOC:
-      analogWrite(SPEAKER_PIN,2);
-      delay(100);
-      analogWrite(SPEAKER_PIN,0);           
       println("TOC");
+      // Example with PWM:
+      // analogWrite(SPEAKER_PIN,2);
+      // delay(100);
+      // analogWrite(SPEAKER_PIN,0);  
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_TIMES_UP:
       println("TIMES_UP");
+      tone(SPEAKER_PIN, 300, 300);
+      delay(300);
+      tone(SPEAKER_PIN, 300, 300);
+      delay(300);
+      tone(SPEAKER_PIN, 300, 300);
       break;
     case BEEP_POWER_ON:
       println("POWER_ON");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_CATEGORY_CHANGE:
       println("CATEGORY_CHANGE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_CHANGE:
       println("SCORE_CHANGE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_SCORE_RESET:
       println("SCORE_RESET");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_WIN_GAME:
       println("WIN_GAME");
+      for (int i = 0; i < 3; ++i) {
+        tone(SPEAKER_PIN, 300, 250);
+        delay(100);
+        tone(SPEAKER_PIN, 400, 250);
+        delay(100);
+        tone(SPEAKER_PIN, 500, 250);
+        delay(100);
+      }
       break;
     case BEEP_STOP_ROUND:
       println("STOP_ROUND");
+      tone(SPEAKER_PIN, 300, 30);
       break;
     case BEEP_EXIT_GAME_DONE_STATE:
       println("EXIT_GAME_DONE_STATE");
+      tone(SPEAKER_PIN, 300, 30);
       break;
   }
 }
@@ -289,6 +314,20 @@ void rotate_category() {
   }
 }
 
+void update_clue() {
+  while (true) {
+    cur_clue = get_clue_as_string(cur_category,cluefile);
+    
+    // Performance sin coming up: calling get_display_text()
+    // to check if it fits on LCD, and then again to actually
+    // display it.  Oops.
+    if (get_display_text(cur_clue).length() > 0) {
+      break;
+    }
+  }
+}
+
+
 void start_new_round() {
   game_state = IN_ROUND;
 
@@ -299,7 +338,12 @@ void start_new_round() {
   last_beep_speed_change_millis = millis(); // since we just changed the frequency
 
   // Update the display
-  updateDisplay(get_clue_as_string(cur_category,cluefile));
+  update_clue();
+  updateDisplay(cur_clue);
+
+  // When we get back to category selection, we want to still
+  // show the clue, not the category.
+  is_category_displayed_category_selection_mode = false;
 }
 
 void end_current_round() {
@@ -318,6 +362,9 @@ void end_game() {
     updateDisplay("Brunettes Win!");
   }
   game_state = GAME_DONE;
+
+  // Back into "show the category" mode
+  is_category_displayed_category_selection_mode = true;
 }
 
 
@@ -378,6 +425,10 @@ void loop() {
         }
 
         if (button_category.just_pressed()) {
+          // This button push puts us into category-display mode if we
+          // weren't already there.
+          is_category_displayed_category_selection_mode = true;
+
           play_beep(BEEP_CATEGORY_CHANGE);
           rotate_category();
           updateDisplay(categories[cur_category]);
@@ -396,12 +447,10 @@ void loop() {
         else if (button_team1.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team1;
-          updateDisplay(categories[cur_category]);
         }
         else if (button_team2.just_pressed()) {
           play_beep(BEEP_SCORE_CHANGE);
           ++score_team2;
-          updateDisplay(categories[cur_category]);
         }
         if (score_team1 == 7 || score_team2 == 7) \
         {
@@ -413,6 +462,12 @@ void loop() {
         // have been pushed will update the display.  Note the the start/stop
         // button push won't end up here since we break in that case.  Same with the
         // game over case.
+        // Update with clue or category depending on what's needed.
+        if (is_category_displayed_category_selection_mode) {
+          updateDisplay(categories[cur_category]);
+        } else {
+          updateDisplay(cur_clue);
+        }
         
         break;
       case IN_ROUND:
@@ -427,7 +482,8 @@ void loop() {
         }
         if (button_next.just_pressed()) {
           // No sound on this event
-          updateDisplay(get_clue_as_string(cur_category,cluefile));
+          update_clue();
+          updateDisplay(cur_clue);
         }
         do_tic_toc();
         break;
