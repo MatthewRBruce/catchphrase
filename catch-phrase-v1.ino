@@ -551,8 +551,8 @@ void loop() {
         if (is_score_reset_needed()) {
           // Note we're deviating from standard catch-phrase here to
           // reset the scores immediately rather than after a delay
-          int score_team1 = 0;
-          int score_team2 = 0;
+          score_team1 = 0;
+          score_team2 = 0;
 
           play_beep(BEEP_SCORE_RESET);
         }
