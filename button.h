@@ -15,6 +15,8 @@ class Button {
 		bool just_released();
 		bool is_pressed();
 		bool is_released();
+    //scottnew
+    long get_time_pressed();
 		static unsigned long get_last_button_press();
 		static void reset_last_button_press();
 	private:

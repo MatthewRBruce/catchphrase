@@ -10,6 +10,7 @@
 
 #define MAX_LONG 4294967295
 
+byte TRANSISTOR_POWER_PIN = 0;
 byte START_STOP_PIN = 2;
 byte TEAM1_PIN = 3;
 byte TEAM2_PIN = 4;
@@ -28,8 +29,8 @@ byte SD_PIN_CS = 10;
 #define SLEEP_HARD_TIME 600000
 #define SLEEP_DIM_TIME 120000
 // Use this to debug sleep code
-//#define SLEEP_HARD_TIME 30000
-//#define SLEEP_DIM_TIME 15000
+// #define SLEEP_HARD_TIME 15000
+// #define SLEEP_DIM_TIME 5000
 
 // How long to wait before acknoledging button pushes after a sleep mode
 #define SLEEP_HOLD_TIME 100
@@ -64,6 +65,10 @@ enum GAME_STATES {CATEGORY_SELECTION,IN_ROUND,GAME_DONE};
 
 GAME_STATES game_state = CATEGORY_SELECTION;
 
+// scottnew
+bool camping_mode = false;
+bool camping_mode_button_push_registered = false;
+
 bool is_category_displayed_category_selection_mode = true;
 int cur_category = 0;
 String cur_clue = "";
@@ -97,6 +102,10 @@ bool rng_seeded = false;
 // File Descriptor for clue file on the SD card
 File cluefile;
 
+// scottnew
+// | / \ - ...
+int spinner_position = 0;
+
 // BEEP!
 enum BEEP_TYPE {
   BEEP_TIC,
@@ -114,6 +123,39 @@ enum BEEP_TYPE {
 
 // Play the tones, and print them to the console
 void play_beep(BEEP_TYPE beep) {
+
+  //scottnew
+  if (camping_mode) {
+    switch (beep) {
+      case BEEP_TIC:
+      case BEEP_TOC:
+        if (++spinner_position == 4) {
+          spinner_position = 0;
+        }
+        char spinner_char;
+        switch (spinner_position) {
+          case 0: spinner_char = '|'; break;
+          case 1: spinner_char = '/'; break;
+          case 2: spinner_char = '-'; break;
+
+          // Fake backslash b/c the char map sucks.
+          case 3: spinner_char = 0xA4; break;
+        }
+        lcd.setCursor(0, 1);
+        lcd.print(spinner_char);
+        lcd.setCursor(15, 1);
+        lcd.print(spinner_char);
+        break;
+      case BEEP_TIMES_UP:
+        lcd.setCursor(0, 1);
+        lcd.print("X");
+        lcd.setCursor(15, 1);
+        lcd.print("X");
+    }
+    // Quiet!  People are sleeping!
+    return;
+  }
+
   print("BEEP - ");  
   switch (beep) {
     case BEEP_TIC:
@@ -187,7 +229,8 @@ unsigned long subtract_times(unsigned long t1, unsigned long t2) {
 }
 
 
-void updateDisplay(String displayString) {
+// scottnew
+void updateDisplay(String displayString, bool clearBottomCorners = true) {
 
   String formattedText = get_display_text(displayString);
 
@@ -205,10 +248,20 @@ void updateDisplay(String displayString) {
   lcd.print(formattedText.substring(0,12));
   lcd.print(" ");
   lcd.print(score_team2); 
-  lcd.setCursor(0, 1);
-  lcd.print("  ");
+
+
+  // scottnew
+  if (clearBottomCorners) {
+    lcd.setCursor(0, 1);
+    lcd.print("  ");
+  } else {
+    lcd.setCursor(2, 1);
+  }
   lcd.print(formattedText.substring(12));
-  lcd.print("  ");
+  // scottnew
+  if (clearBottomCorners) {
+    lcd.print("  ");
+  }
 
   print(score_team1);
   print(" ");
@@ -232,8 +285,9 @@ void sleep_power_down() {
   if (SERIAL_CONSOLE_ENABLE) {
     Serial.flush();
     Serial.end();
+    delay(2000);
   }
-  delay(2000);
+
   sleep_enable();
   attachInterrupt(digitalPinToInterrupt(START_STOP_PIN), wake_interrupt_callback, LOW);
     
@@ -248,28 +302,22 @@ void sleep_power_down() {
 
   println("going to sleep");
 //  updateDisplay("I'm sooooo tired");
+  digitalWrite(TRANSISTOR_POWER_PIN,LOW);
   sleep_cpu();
-
-  // Initialize the LCD (16 columns, 2 rows)
-  game_state = CATEGORY_SELECTION;
-
-  // Reset the game
-  println("Waking up from Sleep");
-  cur_category = 0;
-  score_team1 = 0;
-  score_team2 = 0;
-
-  updateDisplay(categories[cur_category]);
-  Button::reset_last_button_press();
+  
+  doSetup(false);
 
   end_of_sleep_hold_time = millis() + SLEEP_HOLD_TIME;
-  is_category_displayed_category_selection_mode = true;
 
   sleep_disable();
 }
 
-
 void setup() {
+  doSetup(true);
+}
+
+void doSetup(bool firstTime) {
+
   if (SERIAL_CONSOLE_ENABLE) {
     Serial.begin(9600);
      while (!Serial) {
@@ -279,16 +327,17 @@ void setup() {
   //SPI.begin();
   println("Catch Phrase - Power On");
   play_beep(BEEP_POWER_ON);
-  delay(2000);// Give reader a chance to see the output.
-  
+    
   game_state = CATEGORY_SELECTION;
 
+  pinMode(TRANSISTOR_POWER_PIN,OUTPUT);
   pinMode(TEAM1_PIN,INPUT_PULLUP);
   pinMode(TEAM2_PIN,INPUT_PULLUP);
   pinMode(START_STOP_PIN,INPUT_PULLUP);
   pinMode(NEXT_PIN,INPUT_PULLUP);
   pinMode(CATEGORY_PIN,INPUT_PULLUP);
 
+  digitalWrite(TRANSISTOR_POWER_PIN,HIGH);
   digitalWrite(TEAM1_PIN,HIGH);
   digitalWrite(TEAM2_PIN,HIGH);
   digitalWrite(START_STOP_PIN,HIGH);
@@ -308,12 +357,25 @@ void setup() {
   println("initialization done.");
   println("Initialized SD Card Reader");
 
-  println("Being Read File");
-  cluefile = readFile("clues.txt");
+  if (firstTime) {
+    println("Being Read File");
+    cluefile = readFile("clues.txt");
+  }
   digitalWrite(LCD_PIN_BL,HIGH);
   updateDisplay(categories[cur_category]);
   Button::reset_last_button_press();
 
+  // Initialize the LCD (16 columns, 2 rows)
+  game_state = CATEGORY_SELECTION;
+
+  // Reset the game
+  cur_category = 0;
+  score_team1 = 0;
+  score_team2 = 0;
+
+  updateDisplay(categories[cur_category]);
+  
+  is_category_displayed_category_selection_mode = true;
 }
 
 void rotate_category() {
@@ -451,6 +513,27 @@ void loop() {
           // in IN_ROUND state.  There's nothing else that could be going
           // on that we'd want to process.
           break;
+        }
+
+        // scottnew
+        if (button_next.get_time_pressed() > 1000){
+          if (!camping_mode_button_push_registered) {
+            if (!camping_mode) {
+              camping_mode = true;
+              updateDisplay("Camping Mode (Shh Krista)");
+            } else {
+              camping_mode = false;
+              updateDisplay("Krista Mode (Loud)");
+            }
+            // We've taken action on the long button push, don't do it
+            // again until the button is released
+            camping_mode_button_push_registered = true;
+            break;
+          }
+        } else {
+          // The button hasn't been held long enough, make sure we're ready
+          // to notice a long press
+          camping_mode_button_push_registered = false;
         }
 
         if (button_category.just_pressed()) {

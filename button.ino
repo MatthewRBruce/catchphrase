@@ -19,8 +19,9 @@ void Button::update_advertised_state() {
 		last_change_millis = now;				
 	}
 
+  // scottnew
+  last_advertised_state = cur_advertised_state;
 	if(subtract_times(now,last_change_millis) > 50) {
-		last_advertised_state = cur_advertised_state;
 		cur_advertised_state = cur_state;
 	}	
 	last_read_state = cur_state;
@@ -48,6 +49,13 @@ bool Button::is_pressed() {
 }
 bool Button::is_released() {
 	return cur_advertised_state == 1;
+}
+// scottnew
+long Button::get_time_pressed() {
+  if (is_pressed()) {
+    return millis() - last_change_millis;
+  }
+  return 0;
 }
 
 unsigned long Button::get_last_button_press() {
