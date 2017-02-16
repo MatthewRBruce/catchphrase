@@ -424,13 +424,13 @@ void end_current_round() {
 
 // Requires: score_team1 == 7 or score_team2 == 7
 void end_game() {
-  play_beep(BEEP_WIN_GAME);
   if (score_team1 == 7)
   {
     updateDisplay("Blondes Win!");
   } else {
     updateDisplay("Brunettes Win!");
   }
+  play_beep(BEEP_WIN_GAME);
   game_state = GAME_DONE;
 
   // Back into "show the category" mode
