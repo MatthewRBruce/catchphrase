@@ -19,8 +19,7 @@ for f in listdir(basedir):
 		clues[curcat] = [titlecase(x) for x in  list(set(clueFD.read().splitlines()))]
 		
 
-print "{:25}".format(str(len(clues) + 1))
-print "{:25}".format("Everything")
+print "{:25}".format(str(len(clues)))
 
 for cat in clues.keys():
 	curcat = "".join(filter(lambda x: x in printable, cat))
