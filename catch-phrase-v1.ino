@@ -347,6 +347,13 @@ void doSetup(bool firstTime) {
   // Initialize the LCD (16 columns, 2 rows)
   lcd.begin(16, 2);
 
+  // Write to all display cells.  This shouldn't be needed, but we get
+  // corrupt characters occasionally otherwise.
+  lcd.setCursor(0,0);
+  lcd.print("                ");
+  lcd.setCursor(0,1);
+  lcd.print("                ");
+
   print("Initializing SD card...");
 
   if (!SD.begin(SD_PIN_CS)) {
@@ -537,13 +544,19 @@ void loop() {
         }
 
         if (button_category.just_pressed()) {
+
+
+          play_beep(BEEP_CATEGORY_CHANGE);
+          if (is_category_displayed_category_selection_mode) {
+            // Only rotate the category if we were showing it before
+            rotate_category();
+          }
+
+          updateDisplay(categories[cur_category]);
+
           // This button push puts us into category-display mode if we
           // weren't already there.
           is_category_displayed_category_selection_mode = true;
-
-          play_beep(BEEP_CATEGORY_CHANGE);
-          rotate_category();
-          updateDisplay(categories[cur_category]);
         }
 
         // If we get new team1/2 button push, and the other one is pressed
@@ -633,4 +646,6 @@ void loop() {
       
     }
 
+  // Save some power
+  delay(5);
 }

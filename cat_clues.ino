@@ -22,6 +22,7 @@
 // <CATEGORY 3 CLUE 2>
 // <CATEGORY 3 CLUE 3>
 //EOF
+//remove
 
 int NUM_CATEGORIES;
 
@@ -65,7 +66,7 @@ File readFile(const char * filename) {
   categories = (char **)malloc(NUM_CATEGORIES * sizeof(char *));  
   category_offsets = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
   category_len = (unsigned long *)malloc(NUM_CATEGORIES * sizeof(long)); 
-  
+
   //Tack in the 'Everything' Category
   categories[0] = (char *)malloc(sizeof(char) * LINELEN);
   categories[0] = strcpy(categories[0],"Everything");
@@ -84,7 +85,7 @@ File readFile(const char * filename) {
     infile.read(curline,LINELEN);
     
     //Blank line indicating a category boundary?
-    if (strlen(rtrim(curline)) == 0) {
+    if (strlen(rtrim(curline)) == 0 && curcategory < NUM_CATEGORIES) {
       category_offsets[curcategory] = infile.position();
 
       //If this is the first category, we can't calculate the number of clues yet, since we don't know where it will end
@@ -94,10 +95,13 @@ File readFile(const char * filename) {
         category_len[0] = category_len[0] + category_len[curcategory - 1]; 
       }
       curcategory++;
+
+
+
+
     }
   }
-
-   //No Blank line after the last category, so we dont subtract 1
+  //No Blank line after the last category, so we dont subtract 1
   category_len[curcategory - 1] = (infile.position() - category_offsets[curcategory - 1]) / LINELEN;
   category_len[0] = category_len[0] + category_len[curcategory - 1];
 
@@ -114,27 +118,10 @@ char * get_clue(int category, File cluefile) {
 
   //If Everything, pick a random category that isn't Everything
   if (category == 0) {
-
-    // To weight the categories by the number of entries in them, pick a
-    // random number between 0 and total # of clues and see in which
-    // category it falls.
-    int randomOffset = random(category_len[0]);
-    int count = 0;
-
-    // Start i at 1 because it's the first non-everything category
-    for (int i = 1; i < NUM_CATEGORIES; ++i) {
-      count += category_len[i];
-      if (count > randomOffset) {
-
-        // This is guaranteed to be true by the last category since
-        // count will be up to the total number of clues
-        category = i;
-        break;
-      }
-    }
+    category = rand() % (NUM_CATEGORIES - 1) + 1;
   }
 
-  curclue = random(category_len[category]);
+  curclue = rand() % (category_len[category]);
   seekpos = category_offsets[category] + curclue * LINELEN;
   cluefile.seek(seekpos);
   cluefile.read(curline,LINELEN);
